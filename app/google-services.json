@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "216296056279",
+    "project_id": "kotlin-ridit",
+    "storage_bucket": "kotlin-ridit.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:216296056279:android:2386d1afa31c648093d792",
+        "android_client_info": {
+          "package_name": "com.example.kotlin_ridit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCa8ho41DiFbbgqm9LqDJCYElLJgXbzPs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
