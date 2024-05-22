@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">kotlin-ridit</string>
+    <string name="appName">ridit</string>
 </resources>
