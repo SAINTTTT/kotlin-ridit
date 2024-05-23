@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F3F3F3"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:text="@string/create_comment_header"
+        android:textColor="#333"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvCommentToTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:textColor="#222"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        tool:text="Un post cualquiera" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:text="@string/create_comment_content_header"
+        android:textColor="#333"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:background="@color/teal_200"
+        android:padding="10dp"
+        app:cardCornerRadius="10dp">
+
+        <EditText
+            android:id="@+id/etCommentContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fafafa"
+            android:foregroundTint="#FFFFFF"
+            android:gravity="top"
+            android:hint="@string/hint_create_comment"
+            android:inputType="textMultiLine"
+            android:minHeight="200dp" />
+
+    </androidx.cardview.widget.CardView>
+
+
+    <Button
+        android:id="@+id/btCommentCreate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#555"
+        android:text="@string/create_comment_btn_text"
+        android:textColor="#fafafa"
+        android:textSize="20sp" />
+</LinearLayout>

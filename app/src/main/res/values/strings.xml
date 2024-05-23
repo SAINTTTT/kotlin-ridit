@@ -6,4 +6,8 @@
     <string name="create_post_title_header">Título del post</string>
     <string name="create_post_content_header">Contenido del post</string>
     <string name="create_post_btn_text">Crear Post</string>
+    <string name="create_comment_header">Estas comentando al post</string>
+    <string name="create_comment_content_header">Tu comentario</string>
+    <string name="hint_create_comment">¡ja ja!</string>
+    <string name="create_comment_btn_text">Comentar</string>
 </resources>
