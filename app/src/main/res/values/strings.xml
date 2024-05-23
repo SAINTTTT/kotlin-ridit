@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">kotlin-ridit</string>
     <string name="appName">ridit</string>
+    <string name="hint_create_post_title">Un título descriptivo</string>
+    <string name="hint_create_post_content">¡Qué lindo día!</string>
+    <string name="create_post_title_header">Título del post</string>
+    <string name="create_post_content_header">Contenido del post</string>
+    <string name="create_post_btn_text">Crear Post</string>
 </resources>
