@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class PostActivity : AppCompatActivity() {
+    companion object {
+        const val EXTRA_POST_TITLE = "title"
+    }
     private lateinit var cvPost: CardView
     private lateinit var rvItemPostComments: RecyclerView
     private lateinit var commentsAdapter: PostCommentsAdapter
@@ -39,11 +42,10 @@ class PostActivity : AppCompatActivity() {
         rvItemPostComments.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rvItemPostComments.adapter = commentsAdapter
-
     }
 
     private fun initDummyPost(cv: CardView) {
-        cv.findViewById<TextView>(R.id.tvPostTitle).text = "El titulo"
+        cv.findViewById<TextView>(R.id.tvPostTitle).text = intent.getStringExtra(EXTRA_POST_TITLE).orEmpty()
         cv.findViewById<TextView>(R.id.tvPostCreator).text = "Usuario X"
         cv.findViewById<TextView>(R.id.tvPostContent).text = "El contenido del post es este"
         cv.findViewById<TextView>(R.id.tvPostUpvoteCount).text = "55"
