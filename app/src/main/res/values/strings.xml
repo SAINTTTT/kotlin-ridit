@@ -10,4 +10,5 @@
     <string name="create_comment_content_header">Tu comentario</string>
     <string name="hint_create_comment">¡ja ja!</string>
     <string name="create_comment_btn_text">Comentar</string>
+    <string name="post_creation_success">Se ha creado el post</string>
 </resources>
