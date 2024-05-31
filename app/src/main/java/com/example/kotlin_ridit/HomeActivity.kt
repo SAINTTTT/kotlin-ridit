@@ -2,6 +2,7 @@ package com.example.kotlin_ridit
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,20 +11,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_TITLE
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var rvPosts: RecyclerView
     private lateinit var homePostsAdapter: HomePostsAdapter
-    private val dummyHomePosts = listOf(
-        HomePost("Título 1", "Este es el contenido"),
-        HomePost("Título 4", "Quiero contarles algo"),
-        HomePost("Hace frío", "Es invierno y me quejo del frío"),
-        HomePost("Sube la luz", "Preparen las antorchas!!!")
-    )
+//    private val dummyHomePosts = listOf(
+//        HomePost("Título 1", "Este es el contenido"),
+//        HomePost("Título 4", "Quiero contarles algo"),
+//        HomePost("Hace frío", "Es invierno y me quejo del frío"),
+//        HomePost("Sube la luz", "Preparen las antorchas!!!")
+//    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
         setContentView(R.layout.activity_home)
         initComponent()
         initUI()
@@ -35,9 +41,10 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun initUI() {
-        homePostsAdapter = HomePostsAdapter(dummyHomePosts) { navigateToPostItem(it) }
+        homePostsAdapter = HomePostsAdapter(emptyList()) { navigateToPostItem(it) }
         rvPosts.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rvPosts.adapter = homePostsAdapter
+        getHomePosts()
     }
 
     private fun navigateToPostItem(title: String) {
@@ -45,15 +52,49 @@ class HomeActivity : AppCompatActivity() {
         intent.putExtra(EXTRA_POST_TITLE, title)
         startActivity(intent)
     }
+
+    private fun getHomePosts() {
+        val posts = mutableListOf<HomePost>()
+        val db = Firebase.firestore
+        db.collection("posts")
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    homePostsAdapter.addData(
+                        HomePost(
+                            document.data["title"] as String,
+                            document.data["content"] as String,
+                            document.data["creator"] as String,
+                            document.data["downvoteCount"].toString(),
+                            document.data["upvoteCount"].toString(),
+                            document.data["commentsCount"].toString()
+                        )
+                    )
+                    Log.d("FromFIRESTORE", "${document.id} => ${document.data}")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d("FromFIRESTORE", "Error getting documents: ", exception)
+            }
+        Log.d("DENTRODEGETHOMEPOST", posts.toString())
+    }
 }
 
-data class HomePost(val title: String, val content: String)
+data class HomePost(
+    val title: String,
+    val content: String,
+    val creator: String,
+    val downvoteCount: String,
+    val upvoteCount: String,
+    val commentsCount: String
+)
 
 class HomePostsAdapter(
     private val posts: List<HomePost>,
     private val onItemSelected: (String) -> Unit
 ) :
     RecyclerView.Adapter<HomePostsViewHolder>() {
+    private val homeposts = mutableListOf<HomePost>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomePostsViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.item_home_post, parent, false)
@@ -61,11 +102,22 @@ class HomePostsAdapter(
     }
 
     override fun getItemCount(): Int {
-        return posts.size
+        return homeposts.size
     }
 
     override fun onBindViewHolder(holder: HomePostsViewHolder, position: Int) {
-        holder.render(posts[position], onItemSelected)
+        holder.render(homeposts[position], onItemSelected)
+    }
+
+    fun setData(newPosts: List<HomePost>) {
+        homeposts.clear()
+        homeposts.addAll(newPosts)
+        notifyDataSetChanged()
+    }
+
+    fun addData(newPost: HomePost) {
+        homeposts.add(newPost)
+        notifyDataSetChanged()
     }
 
 }
@@ -83,10 +135,10 @@ class HomePostsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     fun render(homePost: HomePost, onItemSelected: (String) -> Unit) {
         tvPostTitle.text = homePost.title
         tvPostContent.text = homePost.content
-        tvPostCreator.text = "Usario X"
-        tvPostUpvoteCount.text = (Math.random() * 100).toInt().toString()
-        tvPostDownvoteCount.text = (Math.random() * 100).toInt().toString()
-        tvPostCommentsCount.text = (Math.random() * 100).toInt().toString()
+        tvPostCreator.text = homePost.creator
+        tvPostUpvoteCount.text = homePost.upvoteCount
+        tvPostDownvoteCount.text = homePost.downvoteCount
+        tvPostCommentsCount.text = homePost.commentsCount
         root.setOnClickListener { onItemSelected(homePost.title) }
     }
 }
