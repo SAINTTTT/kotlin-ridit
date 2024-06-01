@@ -9,55 +9,69 @@
         android:id="@+id/tvPersonalData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/profile_personal_data"
-        android:textSize="20sp"
         android:paddingBottom="10dp"
-        />
+        android:text="@string/profile_personal_data"
+        android:textSize="20sp" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="#444"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:background="#444" />
 
     <TextView
         android:id="@+id/tvPostHistory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/profile_post_history"
-        android:textSize="20sp"
         android:paddingBottom="10dp"
-        />
+        android:text="@string/profile_post_history"
+        android:textSize="20sp" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="#444"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:background="#444" />
+
+    <TextView
+        android:id="@+id/tvCommentsHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:text="@string/profile_comments_history"
+        android:textSize="20sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginBottom="20dp"
+        android:background="#444" />
 
     <TextView
         android:id="@+id/tvCommunities"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/profile_communities"
-        android:textSize="20sp"
         android:paddingBottom="10dp"
-        />
+        android:text="@string/profile_communities"
+        android:textSize="20sp" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="#444"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:background="#444" />
 
     <TextView
         android:id="@+id/tvMessages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/profile_messages"
-        android:textSize="20sp"
         android:paddingBottom="10dp"
-        />
+        android:text="@string/profile_messages"
+        android:textSize="20sp" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="#444"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:background="#444" />
 </LinearLayout>
