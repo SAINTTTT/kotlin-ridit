@@ -15,6 +15,9 @@
         android:theme="@style/Theme.Kotlinridit"
         tools:targetApi="31">
         <activity
+            android:name=".PostHistoryActivity"
+            android:exported="false" />
+        <activity
             android:name=".PersonalDataActivity"
             android:exported="false" />
         <activity
