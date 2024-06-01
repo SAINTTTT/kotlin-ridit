@@ -12,6 +12,11 @@ import com.google.firebase.ktx.Firebase
 
 class CreateCommentActivity : AppCompatActivity() {
 
+    companion object {
+        const val EXTRA_COMMENT_POST_ID = "postId"
+        const val EXTRA_COMMENT_POST_TITLE = "postTitle"
+    }
+
     private lateinit var tvCommentToTitle: TextView
     private lateinit var etCommentContent: EditText
     private lateinit var btCommentCreate: Button
@@ -31,7 +36,7 @@ class CreateCommentActivity : AppCompatActivity() {
 
     private fun initUI() {
         // provisorio
-        tvCommentToTitle.text = "Un post cualquiera"
+        tvCommentToTitle.text = intent.getStringExtra(EXTRA_COMMENT_POST_TITLE)
         btCommentCreate.setOnClickListener {
             val comment = etCommentContent.text.toString()
 
@@ -40,7 +45,7 @@ class CreateCommentActivity : AppCompatActivity() {
                 db.collection("comments").document()
                     .set(
                         hashMapOf(
-                            "commentsTo" to "/posts/zwS5wGVCfE6y1TKRZHxu",
+                            "commentsTo" to "/posts/${intent.getStringExtra(EXTRA_COMMENT_POST_ID)}",
                             "content" to comment,
                             "creator" to "usuario X",
                             "creationDate" to java.util.Date()

@@ -1,5 +1,6 @@
 package com.example.kotlin_ridit
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.kotlin_ridit.CreateCommentActivity.Companion.EXTRA_COMMENT_POST_ID
+import com.example.kotlin_ridit.CreateCommentActivity.Companion.EXTRA_COMMENT_POST_TITLE
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
@@ -69,6 +72,8 @@ class PostActivity : AppCompatActivity() {
             intent.getStringExtra(EXTRA_POST_DOWNVOTES_COUNT)
         cv.findViewById<TextView>(R.id.tvPostCommentsCount).text =
             intent.getStringExtra(EXTRA_POST_COMMENTS_COUNT)
+        cv.findViewById<TextView>(R.id.tvPostCommentsIcon)
+            .setOnClickListener { navigateToCommentPost() }
     }
 
     private fun getPostComments() {
@@ -92,6 +97,13 @@ class PostActivity : AppCompatActivity() {
             .addOnFailureListener { exception ->
                 Log.w("FIRESTORE-GET-COMMENTS", "Error getting documents: ", exception)
             }
+    }
+
+    private fun navigateToCommentPost() {
+        val intentToComment = Intent(this, CreateCommentActivity::class.java)
+        intentToComment.putExtra(EXTRA_COMMENT_POST_TITLE, intent.getStringExtra(EXTRA_POST_TITLE))
+        intentToComment.putExtra(EXTRA_COMMENT_POST_ID, intent.getStringExtra(EXTRA_POST_ID))
+        startActivity(intentToComment)
     }
 }
 
