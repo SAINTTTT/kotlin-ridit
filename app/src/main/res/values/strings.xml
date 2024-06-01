@@ -29,4 +29,5 @@
     <string name="profile_messages">mensajes</string>
     <string name="personal_data_header">datos personales</string>
     <string name="post_history_header">tus posts</string>
+    <string name="communities_header">tus comunidades</string>
 </resources>
