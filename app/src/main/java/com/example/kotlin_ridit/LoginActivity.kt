@@ -35,7 +35,7 @@ class LoginActivity : AppCompatActivity() {
                         if (task.isSuccessful) {
                             // Inicio de sesión exitoso, ir a la siguiente actividad
                             val user = auth.currentUser
-                            val intent = Intent(this, MainActivity::class.java)
+                            val intent = Intent(this, HomeActivity::class.java)
                             startActivity(intent)
                             finish()
                         } else {
