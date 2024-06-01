@@ -10,6 +10,7 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var tvPostHistory: TextView
     private lateinit var tvCommunities: TextView
     private lateinit var tvMessages: TextView
+    private lateinit var tvCommentsHistory: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
@@ -22,6 +23,7 @@ class ProfileActivity : AppCompatActivity() {
         tvPostHistory = findViewById(R.id.tvPostHistory)
         tvCommunities = findViewById(R.id.tvCommunities)
         tvMessages = findViewById(R.id.tvMessages)
+        tvCommentsHistory = findViewById(R.id.tvCommentsHistory)
     }
 
     private fun initUI() {
@@ -29,6 +31,7 @@ class ProfileActivity : AppCompatActivity() {
         tvPostHistory.setOnClickListener{ navigateToPostHistory() }
         tvCommunities.setOnClickListener{ navigateToCommunities() }
         tvMessages.setOnClickListener{ navigateToMessages() }
+        tvCommentsHistory.setOnClickListener{ navigateToCommentsHistory() }
     }
 
     private fun navigateToPersonalData() {
@@ -48,6 +51,11 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun navigateToMessages() {
         val intent = Intent(this, MessagesActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun navigateToCommentsHistory() {
+        val intent = Intent(this, CommentsHistoryActivity::class.java)
         startActivity(intent)
     }
 
