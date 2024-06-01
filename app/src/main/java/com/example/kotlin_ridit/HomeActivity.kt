@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_TITLE
+import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_ID
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
@@ -21,6 +21,7 @@ import kotlinx.coroutines.withContext
 class HomeActivity : AppCompatActivity() {
     private lateinit var rvPosts: RecyclerView
     private lateinit var homePostsAdapter: HomePostsAdapter
+    private lateinit var posts: MutableList<HomePost>
 //    private val dummyHomePosts = listOf(
 //        HomePost("Título 1", "Este es el contenido"),
 //        HomePost("Título 4", "Quiero contarles algo"),
@@ -33,44 +34,50 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
         initComponent()
         initUI()
+        CoroutineScope(Dispatchers.IO).launch {
+            getHomePosts()
+        }
 
     }
 
     private fun initComponent() {
         rvPosts = findViewById(R.id.rvHomePosts)
+        posts = emptyList<HomePost>().toMutableList()
     }
 
     private fun initUI() {
-        homePostsAdapter = HomePostsAdapter(emptyList()) { navigateToPostItem(it) }
+        homePostsAdapter = HomePostsAdapter(posts) { navigateToPostItem(it) }
         rvPosts.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rvPosts.adapter = homePostsAdapter
-        getHomePosts()
     }
 
-    private fun navigateToPostItem(title: String) {
+    private fun navigateToPostItem(id: String) {
         val intent = Intent(this, PostActivity::class.java)
-        intent.putExtra(EXTRA_POST_TITLE, title)
+        intent.putExtra(EXTRA_POST_ID, id)
         startActivity(intent)
     }
 
     private fun getHomePosts() {
-        val posts = mutableListOf<HomePost>()
         val db = Firebase.firestore
         db.collection("posts")
             .get()
             .addOnSuccessListener { result ->
                 for (document in result) {
-                    homePostsAdapter.addData(
+                    posts.add(
                         HomePost(
                             document.data["title"] as String,
                             document.data["content"] as String,
                             document.data["creator"] as String,
                             document.data["downvoteCount"].toString(),
                             document.data["upvoteCount"].toString(),
-                            document.data["commentsCount"].toString()
+                            document.data["commentsCount"].toString(),
+                            document.id as String
                         )
                     )
                     Log.d("FromFIRESTORE", "${document.id} => ${document.data}")
+                }
+                runOnUiThread {
+                    homePostsAdapter.setData(posts)
                 }
             }
             .addOnFailureListener { exception ->
@@ -86,7 +93,8 @@ data class HomePost(
     val creator: String,
     val downvoteCount: String,
     val upvoteCount: String,
-    val commentsCount: String
+    val commentsCount: String,
+    val id: String
 )
 
 class HomePostsAdapter(
@@ -106,7 +114,9 @@ class HomePostsAdapter(
     }
 
     override fun onBindViewHolder(holder: HomePostsViewHolder, position: Int) {
-        holder.render(homeposts[position], onItemSelected)
+        if (homeposts.isNotEmpty()) {
+            holder.render(homeposts[position], onItemSelected)
+        }
     }
 
     fun setData(newPosts: List<HomePost>) {
@@ -139,6 +149,6 @@ class HomePostsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         tvPostUpvoteCount.text = homePost.upvoteCount
         tvPostDownvoteCount.text = homePost.downvoteCount
         tvPostCommentsCount.text = homePost.commentsCount
-        root.setOnClickListener { onItemSelected(homePost.title) }
+        root.setOnClickListener { onItemSelected(homePost.id) }
     }
 }
