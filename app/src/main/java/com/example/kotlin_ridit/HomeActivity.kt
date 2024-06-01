@@ -17,6 +17,7 @@ import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_DOWNVOTES_COUN
 import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_ID
 import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_TITLE
 import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_UPVOTES_COUNT
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
@@ -28,12 +29,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var rvPosts: RecyclerView
     private lateinit var homePostsAdapter: HomePostsAdapter
     private lateinit var posts: MutableList<HomePost>
-//    private val dummyHomePosts = listOf(
-//        HomePost("Título 1", "Este es el contenido"),
-//        HomePost("Título 4", "Quiero contarles algo"),
-//        HomePost("Hace frío", "Es invierno y me quejo del frío"),
-//        HomePost("Sube la luz", "Preparen las antorchas!!!")
-//    )
+    private lateinit var fabCreatePost: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,12 +45,14 @@ class HomeActivity : AppCompatActivity() {
     private fun initComponent() {
         rvPosts = findViewById(R.id.rvHomePosts)
         posts = emptyList<HomePost>().toMutableList()
+        fabCreatePost = findViewById(R.id.fabCreatePost)
     }
 
     private fun initUI() {
         homePostsAdapter = HomePostsAdapter(posts) { navigateToPostItem(it) }
         rvPosts.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rvPosts.adapter = homePostsAdapter
+        fabCreatePost.setOnClickListener { navigateToCreatePost() }
     }
 
     private fun navigateToPostItem(post: HomePost) {
@@ -66,6 +64,12 @@ class HomeActivity : AppCompatActivity() {
         intent.putExtra(EXTRA_POST_UPVOTES_COUNT, post.upvoteCount)
         intent.putExtra(EXTRA_POST_DOWNVOTES_COUNT, post.downvoteCount)
         intent.putExtra(EXTRA_POST_COMMENTS_COUNT, post.commentsCount)
+        startActivity(intent)
+    }
+
+    private fun navigateToCreatePost() {
+        Log.i("FAB", "FAB Click")
+        val intent = Intent(this, CreatePostActivity::class.java)
         startActivity(intent)
     }
 
@@ -96,6 +100,11 @@ class HomeActivity : AppCompatActivity() {
                 Log.d("FromFIRESTORE", "Error getting documents: ", exception)
             }
         Log.d("DENTRODEGETHOMEPOST", posts.toString())
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getHomePosts()
     }
 }
 
