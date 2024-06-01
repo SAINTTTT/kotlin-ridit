@@ -30,4 +30,5 @@
     <string name="personal_data_header">datos personales</string>
     <string name="post_history_header">tus posts</string>
     <string name="communities_header">tus comunidades</string>
+    <string name="messages_header">tus mensajes</string>
 </resources>
