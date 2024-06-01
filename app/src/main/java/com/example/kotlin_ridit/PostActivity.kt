@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class PostActivity : AppCompatActivity() {
     companion object {
@@ -27,28 +30,28 @@ class PostActivity : AppCompatActivity() {
     private lateinit var cvPost: CardView
     private lateinit var rvItemPostComments: RecyclerView
     private lateinit var commentsAdapter: PostCommentsAdapter
+    private lateinit var comments: MutableList<PostComment>
 
-    private val dummyComments = listOf(
-        PostComment("usuario Y", "ja ja"),
-        PostComment("usuario Z", "ve a trabajar"),
-        PostComment("usuario R", "No lo sonieee")
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post)
         initComponent()
         initUI()
+        CoroutineScope(Dispatchers.IO).launch {
+            getPostComments()
+        }
     }
 
     private fun initComponent() {
         cvPost = findViewById(R.id.cvPost)
         initDummyPost(cvPost)
+        comments = emptyList<PostComment>().toMutableList()
         rvItemPostComments = findViewById(R.id.rvItemPostComments)
     }
 
     private fun initUI() {
-        commentsAdapter = PostCommentsAdapter(dummyComments)
+        commentsAdapter = PostCommentsAdapter(emptyList())
         rvItemPostComments.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rvItemPostComments.adapter = commentsAdapter
@@ -66,29 +69,37 @@ class PostActivity : AppCompatActivity() {
             intent.getStringExtra(EXTRA_POST_DOWNVOTES_COUNT)
         cv.findViewById<TextView>(R.id.tvPostCommentsCount).text =
             intent.getStringExtra(EXTRA_POST_COMMENTS_COUNT)
-        //traer comentario
-        val db = Firebase.firestore
-        db.collection("posts").document(intent.getStringExtra(EXTRA_POST_ID).orEmpty())
-            .get().addOnSuccessListener { document ->
-                if (document != null) {
+    }
 
-                    Log.d("FIRESTORE-GET-POST", "{$document.id} => {$document.data}")
-                } else {
-                    Log.d("FIRESTORE-GET-POST", "NO EXISTE EL DOCUMENTO")
+    private fun getPostComments() {
+        val db = Firebase.firestore
+        db.collection("comments")
+            .whereEqualTo("commentsTo", "/posts/${intent.getStringExtra(EXTRA_POST_ID)}")
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val creator = document.data["creator"]
+                    val content = document.data["content"] as String
+
+                    comments.add(PostComment(creator?.toString() ?: "usuario desconocido", content))
+
+                    Log.d("FIRESTORE-GET-COMMENTS", "${document.id} => ${document.data}")
+                }
+                runOnUiThread {
+                    commentsAdapter.setData(comments)
                 }
             }
             .addOnFailureListener { exception ->
-                Log.d("FIRESTORE-GET-POST", exception.toString())
+                Log.w("FIRESTORE-GET-COMMENTS", "Error getting documents: ", exception)
             }
-        ////
-
     }
 }
 
-data class PostComment(val user: String, val content: String)
-
+data class PostComment(val creator: String, val content: String)
 class PostCommentsAdapter(private val comments: List<PostComment>) :
     RecyclerView.Adapter<PostCommentsViewHolder>() {
+
+    private val postComments = mutableListOf<PostComment>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostCommentsViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.item_post_comment, parent, false)
@@ -96,11 +107,17 @@ class PostCommentsAdapter(private val comments: List<PostComment>) :
     }
 
     override fun getItemCount(): Int {
-        return comments.size
+        return postComments.size
     }
 
     override fun onBindViewHolder(holder: PostCommentsViewHolder, position: Int) {
-        holder.render(comments[position])
+        holder.render(postComments[position])
+    }
+
+    fun setData(comments: MutableList<PostComment>) {
+        postComments.clear()
+        postComments.addAll(comments)
+        notifyDataSetChanged()
     }
 }
 
@@ -109,7 +126,7 @@ class PostCommentsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val tvCommentContent: TextView = view.findViewById(R.id.tvCommentContent)
 
     fun render(comment: PostComment) {
-        tvCommentCreator.text = comment.user
+        tvCommentCreator.text = comment.creator
         tvCommentContent.text = comment.content
     }
 
