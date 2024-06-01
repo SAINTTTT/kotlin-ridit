@@ -104,6 +104,9 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        // Hay que ver de mejorar esto para que sea más eficiente
+        // ya que cada vez que vuelve se llama otra vez a la BBDD
+        posts.clear()
         getHomePosts()
     }
 }
