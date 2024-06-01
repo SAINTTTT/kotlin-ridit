@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -41,13 +42,14 @@ class CreateCommentActivity : AppCompatActivity() {
             val comment = etCommentContent.text.toString()
 
             if (comment != "") {
+                val currentUser = Firebase.auth.currentUser
                 val db = Firebase.firestore
                 db.collection("comments").document()
                     .set(
                         hashMapOf(
                             "commentsTo" to "/posts/${intent.getStringExtra(EXTRA_COMMENT_POST_ID)}",
                             "content" to comment,
-                            "creator" to "usuario X",
+                            "creator" to currentUser?.email,
                             "creationDate" to java.util.Date()
                         )
                     )
