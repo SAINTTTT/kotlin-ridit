@@ -22,4 +22,9 @@
     <string name="login_btn_login">Ingresar</string>
     <string name="login_already_register">¿No tienes cuenta?</string>
     <string name="login_register_action_text">Regístrate</string>
+    <string name="profile_btn_text">perfil</string>
+    <string name="profile_personal_data">datos personales</string>
+    <string name="profile_post_history">historial de posts</string>
+    <string name="profile_communities">comunidades</string>
+    <string name="profile_messages">mensajes</string>
 </resources>

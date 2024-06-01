@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,6 +31,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var homePostsAdapter: HomePostsAdapter
     private lateinit var posts: MutableList<HomePost>
     private lateinit var fabCreatePost: FloatingActionButton
+    private lateinit var btnProfile: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +48,7 @@ class HomeActivity : AppCompatActivity() {
         rvPosts = findViewById(R.id.rvHomePosts)
         posts = emptyList<HomePost>().toMutableList()
         fabCreatePost = findViewById(R.id.fabCreatePost)
+        btnProfile = findViewById(R.id.btnProfile)
     }
 
     private fun initUI() {
@@ -53,6 +56,12 @@ class HomeActivity : AppCompatActivity() {
         rvPosts.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rvPosts.adapter = homePostsAdapter
         fabCreatePost.setOnClickListener { navigateToCreatePost() }
+        btnProfile.setOnClickListener{ navigateToProfile() }
+    }
+
+    private fun navigateToProfile() {
+        val intent = Intent(this, ProfileActivity::class.java)
+        startActivity(intent)
     }
 
     private fun navigateToPostItem(post: HomePost) {
