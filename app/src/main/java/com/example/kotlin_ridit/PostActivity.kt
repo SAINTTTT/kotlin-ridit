@@ -45,7 +45,7 @@ class PostActivity : AppCompatActivity() {
 
     private fun initComponent() {
         cvPost = findViewById(R.id.cvPost)
-        initDummyPost(cvPost)
+        initPost(cvPost)
         comments = emptyList<PostComment>().toMutableList()
         rvItemPostComments = findViewById(R.id.rvItemPostComments)
     }
@@ -57,7 +57,7 @@ class PostActivity : AppCompatActivity() {
         rvItemPostComments.adapter = commentsAdapter
     }
 
-    private fun initDummyPost(cv: CardView) {
+    private fun initPost(cv: CardView) {
         cv.findViewById<TextView>(R.id.tvPostTitle).text = intent.getStringExtra(EXTRA_POST_TITLE)
         cv.findViewById<TextView>(R.id.tvPostCreator).text =
             intent.getStringExtra(EXTRA_POST_CREATOR)
