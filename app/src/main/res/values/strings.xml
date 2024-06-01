@@ -27,4 +27,5 @@
     <string name="profile_post_history">historial de posts</string>
     <string name="profile_communities">comunidades</string>
     <string name="profile_messages">mensajes</string>
+    <string name="personal_data_header">datos personales</string>
 </resources>
