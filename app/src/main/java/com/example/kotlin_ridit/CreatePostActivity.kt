@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.time.Instant
@@ -40,11 +41,12 @@ class CreatePostActivity : AppCompatActivity() {
             val title = etPostTitle.text.toString()
             val content = etPostContent.text.toString()
             if (title != "" && content != "") {
+                val currentUser = Firebase.auth.currentUser
                 val db = Firebase.firestore
                 db.collection("posts").document()
                     .set(
                         hashMapOf(
-                            "creator" to "juancito",
+                            "creator" to currentUser?.email,
                             "title" to title,
                             "content" to content,
                             "upvoteCount" to 0,
