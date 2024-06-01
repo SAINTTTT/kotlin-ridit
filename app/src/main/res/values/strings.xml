@@ -12,4 +12,14 @@
     <string name="create_comment_btn_text">Comentar</string>
     <string name="post_creation_success">Se ha creado el post</string>
     <string name="comment_created">Comentario creado</string>
+    <string name="register_hint_email">Email</string>
+    <string name="register_hint_password">Password</string>
+    <string name="register_btn_text">Registrarse</string>
+    <string name="register_login_already_account">¿Ya tienes cuenta?</string>
+    <string name="register_login_action_text">Ingresa</string>
+    <string name="login_hint_email">Email</string>
+    <string name="login_hint_password">Password</string>
+    <string name="login_btn_login">Ingresar</string>
+    <string name="login_already_register">¿No tienes cuenta?</string>
+    <string name="login_register_action_text">Regístrate</string>
 </resources>
