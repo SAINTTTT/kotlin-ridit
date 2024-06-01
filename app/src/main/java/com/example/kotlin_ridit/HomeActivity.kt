@@ -10,7 +10,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_COMMENTS_COUNT
+import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_CONTENT
+import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_CREATOR
+import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_DOWNVOTES_COUNT
 import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_ID
+import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_TITLE
+import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_UPVOTES_COUNT
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
@@ -51,9 +57,15 @@ class HomeActivity : AppCompatActivity() {
         rvPosts.adapter = homePostsAdapter
     }
 
-    private fun navigateToPostItem(id: String) {
+    private fun navigateToPostItem(post: HomePost) {
         val intent = Intent(this, PostActivity::class.java)
-        intent.putExtra(EXTRA_POST_ID, id)
+        intent.putExtra(EXTRA_POST_ID, post.id)
+        intent.putExtra(EXTRA_POST_TITLE, post.title)
+        intent.putExtra(EXTRA_POST_CONTENT, post.content)
+        intent.putExtra(EXTRA_POST_CREATOR, post.creator)
+        intent.putExtra(EXTRA_POST_UPVOTES_COUNT, post.upvoteCount)
+        intent.putExtra(EXTRA_POST_DOWNVOTES_COUNT, post.downvoteCount)
+        intent.putExtra(EXTRA_POST_COMMENTS_COUNT, post.commentsCount)
         startActivity(intent)
     }
 
@@ -99,7 +111,7 @@ data class HomePost(
 
 class HomePostsAdapter(
     private val posts: List<HomePost>,
-    private val onItemSelected: (String) -> Unit
+    private val onItemSelected: (HomePost) -> Unit
 ) :
     RecyclerView.Adapter<HomePostsViewHolder>() {
     private val homeposts = mutableListOf<HomePost>()
@@ -142,13 +154,13 @@ class HomePostsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private val root: View = view.rootView
 
-    fun render(homePost: HomePost, onItemSelected: (String) -> Unit) {
+    fun render(homePost: HomePost, onItemSelected: (HomePost) -> Unit) {
         tvPostTitle.text = homePost.title
         tvPostContent.text = homePost.content
         tvPostCreator.text = homePost.creator
         tvPostUpvoteCount.text = homePost.upvoteCount
         tvPostDownvoteCount.text = homePost.downvoteCount
         tvPostCommentsCount.text = homePost.commentsCount
-        root.setOnClickListener { onItemSelected(homePost.id) }
+        root.setOnClickListener { onItemSelected(homePost) }
     }
 }
