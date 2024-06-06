@@ -32,4 +32,9 @@
     <string name="communities_header">tus comunidades</string>
     <string name="messages_header">tus mensajes</string>
     <string name="profile_comments_history">historial de comentarios</string>
+    <string name="create_community_name_header">nombre</string>
+    <string name="create_community_name_hint">un nombre descriptivo</string>
+    <string name="create_community_description_header">¿De qué trata la comunidad?</string>
+    <string name="create_community_descritption_hint">Por ej: Acá hablamos de cerveza húngara</string>
+    <string name="create_community_btn_text">Crear comunidad</string>
 </resources>
