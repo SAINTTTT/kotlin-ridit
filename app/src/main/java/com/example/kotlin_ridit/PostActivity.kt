@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlin_ridit.CreateCommentActivity.Companion.EXTRA_COMMENT_POST_ID
 import com.example.kotlin_ridit.CreateCommentActivity.Companion.EXTRA_COMMENT_POST_TITLE
+import com.example.kotlin_ridit.PublicProfileActivity.Companion.EXTRA_USER_NAME
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
@@ -59,7 +60,14 @@ class PostActivity : AppCompatActivity() {
         rvItemPostComments.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rvItemPostComments.adapter = commentsAdapter
-        tvCommunity.setOnClickListener{ navigateToCommunityHome() }
+        tvCommunity.setOnClickListener { navigateToCommunityHome() }
+        cvPost.findViewById<TextView>(R.id.tvPostCreator).setOnClickListener {
+            navigateToUserPublicProfile(
+                intent.getStringExtra(
+                    EXTRA_POST_CREATOR
+                ).toString()
+            )
+        }
     }
 
     private fun initPost(cv: CardView) {
@@ -110,6 +118,12 @@ class PostActivity : AppCompatActivity() {
 
     private fun navigateToCommunityHome() {
         val intent = Intent(this, CommunityHomeActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun navigateToUserPublicProfile(user: String) {
+        val intent = Intent(this, PublicProfileActivity::class.java)
+        intent.putExtra(EXTRA_USER_NAME, user)
         startActivity(intent)
     }
 }
