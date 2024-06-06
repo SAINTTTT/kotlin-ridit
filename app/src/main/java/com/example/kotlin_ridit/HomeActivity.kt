@@ -18,13 +18,13 @@ import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_DOWNVOTES_COUN
 import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_ID
 import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_TITLE
 import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_UPVOTES_COUNT
+import com.example.kotlin_ridit.PublicProfileActivity.Companion.EXTRA_USER_NAME
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var rvPosts: RecyclerView
@@ -53,8 +53,16 @@ class HomeActivity : AppCompatActivity() {
 
     private fun initUI() {
         homePostsAdapter =
-            HomePostsAdapter(posts, { navigateToPostItem(it) }, { navigateToCommunityHome() })
-        rvPosts.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+            HomePostsAdapter(
+                posts,
+                { item -> navigateToPostItem(item) },
+                { navigateToCommunityHome() },
+                { postCreator: String -> run { navigateToPostCreatorPublicProfile(postCreator) } }) // esto no sé por qué funciona así
+        rvPosts.layoutManager = LinearLayoutManager(
+            this,
+            LinearLayoutManager.VERTICAL,
+            false
+        )
         rvPosts.adapter = homePostsAdapter
         fabCreatePost.setOnClickListener { navigateToCreatePost() }
         btnProfile.setOnClickListener { navigateToProfile() }
@@ -85,6 +93,12 @@ class HomeActivity : AppCompatActivity() {
 
     private fun navigateToCommunityHome() {
         val intent = Intent(this, CommunityHomeActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun navigateToPostCreatorPublicProfile(postCreator: String) {
+        val intent = Intent(this, PublicProfileActivity::class.java)
+        intent.putExtra(EXTRA_USER_NAME, postCreator)
         startActivity(intent)
     }
 
@@ -139,7 +153,8 @@ data class HomePost(
 class HomePostsAdapter(
     private val posts: List<HomePost>,
     private val onItemSelected: (HomePost) -> Unit,
-    private val onCommunityClick: () -> Unit
+    private val onCommunityClick: () -> Unit,
+    private val onPostCreatorClick: (String) -> Unit
 ) :
     RecyclerView.Adapter<HomePostsViewHolder>() {
     private val homeposts = mutableListOf<HomePost>()
@@ -155,7 +170,7 @@ class HomePostsAdapter(
 
     override fun onBindViewHolder(holder: HomePostsViewHolder, position: Int) {
         if (homeposts.isNotEmpty()) {
-            holder.render(homeposts[position], onItemSelected, onCommunityClick)
+            holder.render(homeposts[position], onItemSelected, onCommunityClick, onPostCreatorClick)
         }
     }
 
@@ -186,7 +201,8 @@ class HomePostsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     fun render(
         homePost: HomePost,
         onItemSelected: (HomePost) -> Unit,
-        onCommunityClick: () -> Unit
+        onCommunityClick: () -> Unit,
+        onPostCreatorClick: (String) -> Unit
     ) {
         tvPostTitle.text = homePost.title
         tvPostContent.text = homePost.content
@@ -197,5 +213,6 @@ class HomePostsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         tvPostCommunity.text = "En comunidad ABC" // provisorio
         root.setOnClickListener { onItemSelected(homePost) }
         tvPostCommunity.setOnClickListener { onCommunityClick() }
+        tvPostCreator.setOnClickListener { onPostCreatorClick(homePost.creator) }
     }
 }
