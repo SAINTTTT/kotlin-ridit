@@ -34,7 +34,7 @@ class PostActivity : AppCompatActivity() {
     private lateinit var rvItemPostComments: RecyclerView
     private lateinit var commentsAdapter: PostCommentsAdapter
     private lateinit var comments: MutableList<PostComment>
-
+    private lateinit var tvCommunity: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +51,7 @@ class PostActivity : AppCompatActivity() {
         initPost(cvPost)
         comments = emptyList<PostComment>().toMutableList()
         rvItemPostComments = findViewById(R.id.rvItemPostComments)
+        tvCommunity = findViewById(R.id.tvCommunity)
     }
 
     private fun initUI() {
@@ -58,6 +59,7 @@ class PostActivity : AppCompatActivity() {
         rvItemPostComments.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rvItemPostComments.adapter = commentsAdapter
+        tvCommunity.setOnClickListener{ navigateToCommunityHome() }
     }
 
     private fun initPost(cv: CardView) {
@@ -104,6 +106,11 @@ class PostActivity : AppCompatActivity() {
         intentToComment.putExtra(EXTRA_COMMENT_POST_TITLE, intent.getStringExtra(EXTRA_POST_TITLE))
         intentToComment.putExtra(EXTRA_COMMENT_POST_ID, intent.getStringExtra(EXTRA_POST_ID))
         startActivity(intentToComment)
+    }
+
+    private fun navigateToCommunityHome() {
+        val intent = Intent(this, CommunityHomeActivity::class.java)
+        startActivity(intent)
     }
 }
 
