@@ -52,11 +52,12 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun initUI() {
-        homePostsAdapter = HomePostsAdapter(posts) { navigateToPostItem(it) }
+        homePostsAdapter =
+            HomePostsAdapter(posts, { navigateToPostItem(it) }, { navigateToCommunityHome() })
         rvPosts.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rvPosts.adapter = homePostsAdapter
         fabCreatePost.setOnClickListener { navigateToCreatePost() }
-        btnProfile.setOnClickListener{ navigateToProfile() }
+        btnProfile.setOnClickListener { navigateToProfile() }
     }
 
     private fun navigateToProfile() {
@@ -79,6 +80,11 @@ class HomeActivity : AppCompatActivity() {
     private fun navigateToCreatePost() {
         Log.i("FAB", "FAB Click")
         val intent = Intent(this, CreatePostActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun navigateToCommunityHome() {
+        val intent = Intent(this, CommunityHomeActivity::class.java)
         startActivity(intent)
     }
 
@@ -132,7 +138,8 @@ data class HomePost(
 
 class HomePostsAdapter(
     private val posts: List<HomePost>,
-    private val onItemSelected: (HomePost) -> Unit
+    private val onItemSelected: (HomePost) -> Unit,
+    private val onCommunityClick: () -> Unit
 ) :
     RecyclerView.Adapter<HomePostsViewHolder>() {
     private val homeposts = mutableListOf<HomePost>()
@@ -148,7 +155,7 @@ class HomePostsAdapter(
 
     override fun onBindViewHolder(holder: HomePostsViewHolder, position: Int) {
         if (homeposts.isNotEmpty()) {
-            holder.render(homeposts[position], onItemSelected)
+            holder.render(homeposts[position], onItemSelected, onCommunityClick)
         }
     }
 
@@ -172,16 +179,23 @@ class HomePostsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val tvPostUpvoteCount: TextView = view.findViewById(R.id.tvPostUpvoteCount)
     private val tvPostDownvoteCount: TextView = view.findViewById(R.id.tvPostDownvoteCount)
     private val tvPostCommentsCount: TextView = view.findViewById(R.id.tvPostCommentsCount)
+    private val tvPostCommunity: TextView = view.findViewById(R.id.tvPostCommunity)
 
     private val root: View = view.rootView
 
-    fun render(homePost: HomePost, onItemSelected: (HomePost) -> Unit) {
+    fun render(
+        homePost: HomePost,
+        onItemSelected: (HomePost) -> Unit,
+        onCommunityClick: () -> Unit
+    ) {
         tvPostTitle.text = homePost.title
         tvPostContent.text = homePost.content
         tvPostCreator.text = homePost.creator
         tvPostUpvoteCount.text = homePost.upvoteCount
         tvPostDownvoteCount.text = homePost.downvoteCount
         tvPostCommentsCount.text = homePost.commentsCount
+        tvPostCommunity.text = "En comunidad ABC" // provisorio
         root.setOnClickListener { onItemSelected(homePost) }
+        tvPostCommunity.setOnClickListener { onCommunityClick() }
     }
 }
