@@ -8,10 +8,13 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.firestore
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var etRegisterEmail: EditText
+    private lateinit var etRegisterUsername: EditText
     private lateinit var etRegisterPassword: EditText
     private lateinit var btnRegister: Button
     private lateinit var tvRegisterGoToLogin: TextView
@@ -25,6 +28,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun initComponents() {
+        etRegisterUsername = findViewById(R.id.etRegisterUsername)
         etRegisterEmail = findViewById(R.id.etRegisterEmail)
         etRegisterPassword = findViewById(R.id.etRegisterPassword)
         btnRegister = findViewById(R.id.btnRegister)
@@ -37,6 +41,7 @@ class RegisterActivity : AppCompatActivity() {
         tvRegisterGoToLogin.setOnClickListener{finish()}
 
         btnRegister.setOnClickListener() {
+            val username = etRegisterUsername.text.toString()
             val email = etRegisterEmail.text.toString()
             val password = etRegisterPassword.text.toString()
 
@@ -44,6 +49,8 @@ class RegisterActivity : AppCompatActivity() {
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
+                            // Una vez registrado, hago el insert en la DB
+                            Firebase.firestore.collection("users").document(email).set(hashMapOf("username" to username))
                             Log.d("REGISTER", "createUserWithEmail:success")
                             val user = auth.currentUser
                             // redirige al home?
