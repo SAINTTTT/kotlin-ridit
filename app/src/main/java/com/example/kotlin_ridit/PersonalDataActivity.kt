@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 
 class PersonalDataActivity : AppCompatActivity() {
@@ -19,7 +20,7 @@ class PersonalDataActivity : AppCompatActivity() {
         val tvUsername: TextView = findViewById(R.id.tvUsername)
         val tvEmail: TextView = findViewById(R.id.tvEmail)
         val btnChangeEmail: Button = findViewById(R.id.btnChangeEmail)
-        val userId = "miguela@google.com"
+        val userId = FirebaseAuth.getInstance().currentUser?.email.toString()
 
         val docRef= db.collection("users").document(userId)
         docRef.get()

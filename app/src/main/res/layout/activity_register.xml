@@ -6,10 +6,18 @@
     android:padding="16dp">
 
     <EditText
+        android:id="@+id/etRegisterUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Username"
+        android:inputType="textPersonName" />
+
+    <EditText
         android:id="@+id/etRegisterEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/register_hint_email" />
+
 
     <EditText
         android:id="@+id/etRegisterPassword"
