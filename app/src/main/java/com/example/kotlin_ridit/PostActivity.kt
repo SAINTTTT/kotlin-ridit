@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +15,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlin_ridit.CreateCommentActivity.Companion.EXTRA_COMMENT_POST_ID
 import com.example.kotlin_ridit.CreateCommentActivity.Companion.EXTRA_COMMENT_POST_TITLE
 import com.example.kotlin_ridit.PublicProfileActivity.Companion.EXTRA_USER_NAME
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +41,7 @@ class PostActivity : AppCompatActivity() {
     private lateinit var commentsAdapter: PostCommentsAdapter
     private lateinit var comments: MutableList<PostComment>
     private lateinit var tvCommunity: TextView
-
+    private lateinit var tvPostUpvoteArrow: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post)
@@ -53,6 +58,7 @@ class PostActivity : AppCompatActivity() {
         comments = emptyList<PostComment>().toMutableList()
         rvItemPostComments = findViewById(R.id.rvItemPostComments)
         tvCommunity = findViewById(R.id.tvCommunity)
+        tvPostUpvoteArrow = findViewById(R.id.tvPostUpvoteArrow)
     }
 
     private fun initUI() {
@@ -68,6 +74,7 @@ class PostActivity : AppCompatActivity() {
                 ).toString()
             )
         }
+        tvPostUpvoteArrow.setOnClickListener { upvotePost() }
     }
 
     private fun initPost(cv: CardView) {
@@ -125,6 +132,55 @@ class PostActivity : AppCompatActivity() {
         val intent = Intent(this, PublicProfileActivity::class.java)
         intent.putExtra(EXTRA_USER_NAME, user)
         startActivity(intent)
+    }
+
+    private fun upvotePost() {
+        val db = Firebase.firestore
+        val postId = intent.getStringExtra(EXTRA_POST_ID).toString()
+        val userId = FirebaseAuth.getInstance().currentUser?.email.toString()
+        val allPostsRef = db.collection("posts")
+        val postRef = allPostsRef.document(postId)
+        postRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    allPostsRef.whereArrayContains(
+                        "upvoters",
+                        userId
+                    ) //todos los posts que upvote el user
+                        .where(
+                            Filter.equalTo(
+                                FieldPath.documentId(),
+                                postId
+                            )
+                        ) // que sean el post que se quiere votar
+                        .get()
+                        .addOnSuccessListener { snapshot ->
+                            if (snapshot.isEmpty) {
+                                //      agregar a upvoters
+                                postRef.update("upvoters", FieldValue.arrayUnion(userId))
+                                //      incrementar la cantidad de upvotes
+                                postRef.update("upvoteCount", FieldValue.increment(1))
+
+                                Log.d("LEER_POST", "DocumentSnapshot data: ${document.data}")
+                                Toast.makeText(
+                                    applicationContext, "upvote enviado", Toast.LENGTH_SHORT
+                                ).show();
+                            } else {
+                                Toast.makeText(
+                                    applicationContext, "Ya has hecho upvote", Toast.LENGTH_SHORT
+                                ).show();
+                                Log.d("LEER_POST", "Ya se ha hecho upvote ${snapshot.documents}")
+                            }
+                        }
+
+                } else {
+                    Log.d("LEER_POST", "No such document B")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d("LEER_POST", "get failed with ", exception)
+            }
+
     }
 }
 
