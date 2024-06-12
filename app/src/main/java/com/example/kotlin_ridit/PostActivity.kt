@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.kotlin_ridit.CommunityHomeActivity.Companion.EXTRA_COMMUNITY_NAME
 import com.example.kotlin_ridit.CreateCommentActivity.Companion.EXTRA_COMMENT_POST_ID
 import com.example.kotlin_ridit.CreateCommentActivity.Companion.EXTRA_COMMENT_POST_TITLE
 import com.example.kotlin_ridit.PublicProfileActivity.Companion.EXTRA_USER_NAME
@@ -35,6 +36,7 @@ class PostActivity : AppCompatActivity() {
         const val EXTRA_POST_UPVOTES_COUNT = "postUpvotes"
         const val EXTRA_POST_DOWNVOTES_COUNT = "postDownvotes"
         const val EXTRA_POST_COMMENTS_COUNT = "postCommnent"
+        const val EXTRA_POST_POSTED_ON = "postedOn"
     }
 
     private lateinit var db: FirebaseFirestore
@@ -59,6 +61,7 @@ class PostActivity : AppCompatActivity() {
     private fun initDatabase() {
         db = Firebase.firestore
     }
+
     private fun initComponent() {
         cvPost = findViewById(R.id.cvPost)
         initPost(cvPost)
@@ -67,6 +70,7 @@ class PostActivity : AppCompatActivity() {
         tvCommunity = findViewById(R.id.tvCommunity)
         tvPostUpvoteArrow = findViewById(R.id.tvPostUpvoteArrow)
         tvPostDownvoteArrow = findViewById(R.id.tvPostDownvoteArrow)
+        tvCommunity = findViewById(R.id.tvCommunity)
     }
 
     private fun initUI() {
@@ -84,6 +88,7 @@ class PostActivity : AppCompatActivity() {
         }
         tvPostUpvoteArrow.setOnClickListener { upvotePost() }
         tvPostDownvoteArrow.setOnClickListener { downvotePost() }
+        tvCommunity.text = intent.getStringExtra(EXTRA_POST_POSTED_ON).orEmpty()
     }
 
     private fun initPost(cv: CardView) {
@@ -132,8 +137,9 @@ class PostActivity : AppCompatActivity() {
     }
 
     private fun navigateToCommunityHome() {
-        val intent = Intent(this, CommunityHomeActivity::class.java)
-        startActivity(intent)
+        val intentToCommunity = Intent(this, CommunityHomeActivity::class.java)
+        intentToCommunity.putExtra(EXTRA_COMMUNITY_NAME, intent.getStringExtra(EXTRA_POST_POSTED_ON))
+        startActivity(intentToCommunity)
     }
 
     private fun navigateToUserPublicProfile(user: String) {

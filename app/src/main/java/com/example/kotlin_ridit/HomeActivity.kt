@@ -11,11 +11,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.kotlin_ridit.CommunityHomeActivity.Companion.EXTRA_COMMUNITY_NAME
 import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_COMMENTS_COUNT
 import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_CONTENT
 import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_CREATOR
 import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_DOWNVOTES_COUNT
 import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_ID
+import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_POSTED_ON
 import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_TITLE
 import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_UPVOTES_COUNT
 import com.example.kotlin_ridit.PublicProfileActivity.Companion.EXTRA_USER_NAME
@@ -56,7 +58,7 @@ class HomeActivity : AppCompatActivity() {
             HomePostsAdapter(
                 posts,
                 { item -> navigateToPostItem(item) },
-                { navigateToCommunityHome() },
+                { communityName: String -> run { navigateToCommunityHome(communityName)} },
                 { postCreator: String -> run { navigateToPostCreatorPublicProfile(postCreator) } }) // esto no sé por qué funciona así
         rvPosts.layoutManager = LinearLayoutManager(
             this,
@@ -82,6 +84,7 @@ class HomeActivity : AppCompatActivity() {
         intent.putExtra(EXTRA_POST_UPVOTES_COUNT, post.upvoteCount)
         intent.putExtra(EXTRA_POST_DOWNVOTES_COUNT, post.downvoteCount)
         intent.putExtra(EXTRA_POST_COMMENTS_COUNT, post.commentsCount)
+        intent.putExtra(EXTRA_POST_POSTED_ON, post.postedOn)
         startActivity(intent)
     }
 
@@ -91,9 +94,10 @@ class HomeActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun navigateToCommunityHome() {
-        val intent = Intent(this, CommunityHomeActivity::class.java)
-        startActivity(intent)
+    private fun navigateToCommunityHome(communityName: String) {
+        val intentToCommunity = Intent(this, CommunityHomeActivity::class.java)
+        intentToCommunity.putExtra(EXTRA_COMMUNITY_NAME, communityName)
+        startActivity(intentToCommunity)
     }
 
     private fun navigateToPostCreatorPublicProfile(postCreator: String) {
@@ -116,7 +120,8 @@ class HomeActivity : AppCompatActivity() {
                             document.data["downvoteCount"].toString(),
                             document.data["upvoteCount"].toString(),
                             document.data["commentsCount"].toString(),
-                            document.id as String
+                            document.id as String,
+                            document.data["postedOn"]?.toString().orEmpty()
                         )
                     )
                     Log.d("FromFIRESTORE", "${document.id} => ${document.data}")
@@ -147,13 +152,14 @@ data class HomePost(
     val downvoteCount: String,
     val upvoteCount: String,
     val commentsCount: String,
-    val id: String
+    val id: String,
+    val postedOn: String
 )
 
 class HomePostsAdapter(
     private val posts: List<HomePost>,
     private val onItemSelected: (HomePost) -> Unit,
-    private val onCommunityClick: () -> Unit,
+    private val onCommunityClick: (String) -> Unit,
     private val onPostCreatorClick: (String) -> Unit
 ) :
     RecyclerView.Adapter<HomePostsViewHolder>() {
@@ -201,7 +207,7 @@ class HomePostsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     fun render(
         homePost: HomePost,
         onItemSelected: (HomePost) -> Unit,
-        onCommunityClick: () -> Unit,
+        onCommunityClick: (String) -> Unit,
         onPostCreatorClick: (String) -> Unit
     ) {
         tvPostTitle.text = homePost.title
@@ -210,9 +216,9 @@ class HomePostsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         tvPostUpvoteCount.text = homePost.upvoteCount
         tvPostDownvoteCount.text = homePost.downvoteCount
         tvPostCommentsCount.text = homePost.commentsCount
-        tvPostCommunity.text = "En comunidad ABC" // provisorio
+        tvPostCommunity.text = homePost.postedOn // provisorio
         root.setOnClickListener { onItemSelected(homePost) }
-        tvPostCommunity.setOnClickListener { onCommunityClick() }
+        tvPostCommunity.setOnClickListener { onCommunityClick(homePost.postedOn) }
         tvPostCreator.setOnClickListener { onPostCreatorClick(homePost.creator) }
     }
 }
