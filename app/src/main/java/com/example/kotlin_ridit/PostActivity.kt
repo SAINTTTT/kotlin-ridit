@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Filter
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
@@ -36,15 +37,18 @@ class PostActivity : AppCompatActivity() {
         const val EXTRA_POST_COMMENTS_COUNT = "postCommnent"
     }
 
+    private lateinit var db: FirebaseFirestore
     private lateinit var cvPost: CardView
     private lateinit var rvItemPostComments: RecyclerView
     private lateinit var commentsAdapter: PostCommentsAdapter
     private lateinit var comments: MutableList<PostComment>
     private lateinit var tvCommunity: TextView
     private lateinit var tvPostUpvoteArrow: TextView
+    private lateinit var tvPostDownvoteArrow: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post)
+        initDatabase()
         initComponent()
         initUI()
         CoroutineScope(Dispatchers.IO).launch {
@@ -52,6 +56,9 @@ class PostActivity : AppCompatActivity() {
         }
     }
 
+    private fun initDatabase() {
+        db = Firebase.firestore
+    }
     private fun initComponent() {
         cvPost = findViewById(R.id.cvPost)
         initPost(cvPost)
@@ -59,6 +66,7 @@ class PostActivity : AppCompatActivity() {
         rvItemPostComments = findViewById(R.id.rvItemPostComments)
         tvCommunity = findViewById(R.id.tvCommunity)
         tvPostUpvoteArrow = findViewById(R.id.tvPostUpvoteArrow)
+        tvPostDownvoteArrow = findViewById(R.id.tvPostDownvoteArrow)
     }
 
     private fun initUI() {
@@ -75,6 +83,7 @@ class PostActivity : AppCompatActivity() {
             )
         }
         tvPostUpvoteArrow.setOnClickListener { upvotePost() }
+        tvPostDownvoteArrow.setOnClickListener { downvotePost() }
     }
 
     private fun initPost(cv: CardView) {
@@ -94,7 +103,6 @@ class PostActivity : AppCompatActivity() {
     }
 
     private fun getPostComments() {
-        val db = Firebase.firestore
         db.collection("comments")
             .whereEqualTo("commentsTo", "/posts/${intent.getStringExtra(EXTRA_POST_ID)}")
             .get()
@@ -135,7 +143,6 @@ class PostActivity : AppCompatActivity() {
     }
 
     private fun upvotePost() {
-        val db = Firebase.firestore
         val postId = intent.getStringExtra(EXTRA_POST_ID).toString()
         val userId = FirebaseAuth.getInstance().currentUser?.email.toString()
         val allPostsRef = db.collection("posts")
@@ -173,6 +180,19 @@ class PostActivity : AppCompatActivity() {
                             }
                         }
 
+                    //si habia hecho downvote, sacarlo y decrementar los downvotes
+                    allPostsRef.whereArrayContains("downvoters", userId)
+                        .where(Filter.equalTo(FieldPath.documentId(), postId))
+                        .get()
+                        .addOnSuccessListener { snapshot ->
+                            if (!snapshot.isEmpty) {
+                                //      sacar de downvoters
+                                postRef.update("downvoters", FieldValue.arrayRemove(userId))
+                                //      incrementar la cantidad de upvotes
+                                postRef.update("downvoteCount", FieldValue.increment(-1))
+                            }
+                        }
+
                 } else {
                     Log.d("LEER_POST", "No such document B")
                 }
@@ -181,6 +201,66 @@ class PostActivity : AppCompatActivity() {
                 Log.d("LEER_POST", "get failed with ", exception)
             }
 
+    }
+
+    private fun downvotePost() {
+        val postId = intent.getStringExtra(EXTRA_POST_ID).toString()
+        val userId = FirebaseAuth.getInstance().currentUser?.email.toString()
+        val allPostsRef = db.collection("posts")
+        val postRef = allPostsRef.document(postId)
+        postRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    allPostsRef.whereArrayContains(
+                        "downvoters",
+                        userId
+                    ) //todos los posts que upvote el user
+                        .where(
+                            Filter.equalTo(
+                                FieldPath.documentId(),
+                                postId
+                            )
+                        ) // que sean el post que se quiere votar
+                        .get()
+                        .addOnSuccessListener { snapshot ->
+                            if (snapshot.isEmpty) {
+                                //      agregar a downvoters
+                                postRef.update("downvoters", FieldValue.arrayUnion(userId))
+                                //      incrementar la cantidad de upvotes
+                                postRef.update("downvoteCount", FieldValue.increment(1))
+
+                                Log.d("LEER_POST", "DocumentSnapshot data: ${document.data}")
+                                Toast.makeText(
+                                    applicationContext, "downvote enviado", Toast.LENGTH_SHORT
+                                ).show();
+                            } else {
+                                Toast.makeText(
+                                    applicationContext, "Ya has hecho downvote", Toast.LENGTH_SHORT
+                                ).show();
+                                Log.d("LEER_POST", "Ya se ha hecho downvote ${snapshot.documents}")
+                            }
+                        }
+
+                    //si habia hecho upvote, sacarlo y decrementar los upvotes
+                    allPostsRef.whereArrayContains("upvoters", userId)
+                        .where(Filter.equalTo(FieldPath.documentId(), postId))
+                        .get()
+                        .addOnSuccessListener { snapshot ->
+                            if (!snapshot.isEmpty) {
+                                //      sacar de upvoters
+                                postRef.update("upvoters", FieldValue.arrayRemove(userId))
+                                //      incrementar la cantidad de upvotes
+                                postRef.update("upvoteCount", FieldValue.increment(-1))
+                            }
+                        }
+
+                } else {
+                    Log.d("LEER_POST", "No such document B")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d("LEER_POST", "get failed with ", exception)
+            }
     }
 }
 
