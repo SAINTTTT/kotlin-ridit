@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
+import android.content.Intent
 
 class PersonalDataActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,6 +21,8 @@ class PersonalDataActivity : AppCompatActivity() {
         val tvUsername: TextView = findViewById(R.id.tvUsername)
         val tvEmail: TextView = findViewById(R.id.tvEmail)
         val btnChangeEmail: Button = findViewById(R.id.btnChangeEmail)
+        val btnChangeUserName: Button = findViewById(R.id.changeUserNameButton)
+
         val userId = FirebaseAuth.getInstance().currentUser?.email.toString()
 
         val docRef= db.collection("users").document(userId)
@@ -32,7 +35,10 @@ class PersonalDataActivity : AppCompatActivity() {
                     Log.d(TAG, "No such document")
                 }
             }
+        btnChangeUserName.setOnClickListener {
 
+            startActivity(Intent(this, ChangeUserNameActivity::class.java))
+        }
 
         // Configurar el botón para cambiar el email
 //        btnChangeEmail.setOnClickListener {
