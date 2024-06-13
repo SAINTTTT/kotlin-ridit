@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -22,6 +24,7 @@ import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_TITLE
 import com.example.kotlin_ridit.PostActivity.Companion.EXTRA_POST_UPVOTES_COUNT
 import com.example.kotlin_ridit.PublicProfileActivity.Companion.EXTRA_USER_NAME
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
@@ -58,7 +61,7 @@ class HomeActivity : AppCompatActivity() {
             HomePostsAdapter(
                 posts,
                 { item -> navigateToPostItem(item) },
-                { communityName: String -> run { navigateToCommunityHome(communityName)} },
+                { communityName: String -> run { navigateToCommunityHome(communityName) } },
                 { postCreator: String -> run { navigateToPostCreatorPublicProfile(postCreator) } }) // esto no sé por qué funciona así
         rvPosts.layoutManager = LinearLayoutManager(
             this,
@@ -142,6 +145,21 @@ class HomeActivity : AppCompatActivity() {
         // ya que cada vez que vuelve se llama otra vez a la BBDD
         posts.clear()
         getHomePosts()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.logout) {
+            Firebase.auth.signOut()
+            finish()
+            startActivity(Intent(this@HomeActivity, LoginActivity::class.java))
+            return true
+        }
+        return true
     }
 }
 
