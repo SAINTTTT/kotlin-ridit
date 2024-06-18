@@ -38,4 +38,7 @@
     <string name="create_community_descritption_hint">Por ej: Acá hablamos de cerveza húngara</string>
     <string name="create_community_btn_text">Crear comunidad</string>
     <string name="community_home_btn_join_text">unirse</string>
+    <string name="community_icon">Ícono de comunidad</string>
+    <string name="add_button">Añadir comunidad</string>
+
 </resources>
