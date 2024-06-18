@@ -1,5 +1,6 @@
 package com.example.kotlin_ridit
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -76,6 +77,7 @@ class CreatePostActivity : AppCompatActivity() {
                     }
                 Log.i("POST", "$title, $content")
             }
+            startActivity(Intent(this, HomeActivity::class.java))
         }
     }
 }
