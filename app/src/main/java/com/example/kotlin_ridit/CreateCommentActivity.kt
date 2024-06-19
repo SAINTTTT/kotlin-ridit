@@ -1,5 +1,6 @@
 package com.example.kotlin_ridit
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -47,7 +48,7 @@ class CreateCommentActivity : AppCompatActivity() {
                 db.collection("comments").document()
                     .set(
                         hashMapOf(
-                            "commentsTo" to "/posts/${intent.getStringExtra(EXTRA_COMMENT_POST_ID)}",
+                            "commentsTo" to intent.getStringExtra(EXTRA_COMMENT_POST_TITLE),
                             "content" to comment,
                             "creator" to currentUser?.email,
                             "creationDate" to java.util.Date()
@@ -74,6 +75,7 @@ class CreateCommentActivity : AppCompatActivity() {
                     }
                 Log.i("POST", "comentario: $comment")
             }
+            startActivity(Intent(this, HomeActivity::class.java))
         }
     }
 }

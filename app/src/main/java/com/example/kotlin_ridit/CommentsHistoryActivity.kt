@@ -39,14 +39,15 @@ class CommentsHistoryActivity : AppCompatActivity() {
                 for (document in documents) {
                     val content = document.data["content"] as String
                     val creationDate = document.data["creationDate"] as Timestamp
-                    val titleId = document.data["commentsTo"].toString().substring(7)
+                    val titleId = document.data["commentsTo"].toString()
+                    //val titleId = document.data["commentsTo"].toString().substring(7)
 
                     fetchPostTitle(titleId) { title ->
                         this.titlePost.append(title)
 
                     }
                     this.commentList.add(Comment(
-                        this.titlePost.toString(),content,
+                        titleId,content,
                         SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(creationDate.toDate())))
 
                 }
