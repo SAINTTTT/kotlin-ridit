@@ -51,8 +51,8 @@ class RegisterActivity : AppCompatActivity() {
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
                             // Una vez registrado, hago el insert en la DB
-//                            Firebase.firestore.collection("users").document(email)
-//                                .set(hashMapOf("username" to username))
+                            Firebase.firestore.collection("users").document(email)
+                                .set(hashMapOf("username" to username))
                             // guardar en la base para los chats
                             addUserToChatDatabase(username, email, auth.currentUser?.uid)
                             Log.d("REGISTER", "createUserWithEmail:success")
