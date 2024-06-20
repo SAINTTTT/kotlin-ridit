@@ -56,20 +56,21 @@ class ChatActivity : AppCompatActivity() {
     private fun initUI() {
         btnSendMessage.setOnClickListener { sendMessage() }
 
-        db.child("chats").child(senderRoom!!).child("messages").addValueEventListener(object: ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                messageList.clear()
-                for(postSnapshot in snapshot.children) {
-                    val message = postSnapshot.getValue(Message::class.java)
-                    messageList.add(message!!)
+        db.child("chats").child(senderRoom!!).child("messages")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    messageList.clear()
+                    for (postSnapshot in snapshot.children) {
+                        val message = postSnapshot.getValue(Message::class.java)
+                        messageList.add(message!!)
+                    }
+                    messageAdapter.notifyDataSetChanged()
                 }
-                messageAdapter.notifyDataSetChanged()
-            }
 
-            override fun onCancelled(error: DatabaseError) {
+                override fun onCancelled(error: DatabaseError) {
 
-            }
-        })
+                }
+            })
     }
 
     private fun sendMessage() {
