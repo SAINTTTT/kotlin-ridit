@@ -31,24 +31,27 @@ class MessagesActivity : AppCompatActivity() {
     private lateinit var rvMessages: RecyclerView
     private lateinit var chatWithUserItemAdapter: ChatWithUserItemAdapter
     private lateinit var chatsWith: ArrayList<ChatWithUserItem>
+    private lateinit var cvNoMessages: CardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
-        initiComponents()
+        initComponents()
         initUI()
         CoroutineScope(Dispatchers.IO).launch {
             getChats()
         }
     }
 
-    private fun initiComponents() {
+    private fun initComponents() {
         rvMessages = findViewById(R.id.rvMessages)
         chatsWith = ArrayList()
+        cvNoMessages = findViewById(R.id.cvNoMessages)
     }
 
     private fun initUI() {
-        chatWithUserItemAdapter = ChatWithUserItemAdapter(this, chatsWith, {item -> navigateToChatActivity(item)})
+        chatWithUserItemAdapter =
+            ChatWithUserItemAdapter(this, chatsWith) { item -> navigateToChatActivity(item) }
         rvMessages.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rvMessages.adapter = chatWithUserItemAdapter
     }
@@ -59,23 +62,36 @@ class MessagesActivity : AppCompatActivity() {
             .whereEqualTo(FieldPath.documentId(), user?.email)
             .get().addOnSuccessListener { snapshot ->
                 for (document in snapshot) {
-                    val listOfChats = document.data["chatsWith"] as ArrayList<*>
-                    for (chat in listOfChats) {
-                        val chatItem = ChatWithUserItem(
-                            (chat as HashMap<*, *>)["name"].toString(),
-                            (chat as HashMap<*, *>)["uid"].toString()
-                        )
-                        chatsWith.add(chatItem)
+                    if (document.data["chatsWith"] != null) {
+                        val listOfChats = document.data["chatsWith"] as ArrayList<*>
+                        for (chat in listOfChats) {
+                            val chatItem = ChatWithUserItem(
+                                (chat as HashMap<*, *>)["name"].toString(),
+                                (chat as HashMap<*, *>)["uid"].toString()
+                            )
+                            chatsWith.add(chatItem)
+                        }
+
                     }
-                    Log.d("GETCHAT", "${document.data["chatsWith"]}")
-                    Log.d("GETCHAT", "CASTEADO ${listOfChats::class.java}")
-                    Log.d("GETCHAT", "CASTEADO ${listOfChats[0]::class.java}")
-                    Log.d("GETCHAT", "CASTEADO ${(listOfChats[0] as HashMap<*, *>)["uid"]}")
+
                 }
+
+            }.addOnSuccessListener {
                 runOnUiThread() {
+                    if (chatsWith.isEmpty()) {
+                        cvNoMessages.visibility = View.VISIBLE
+                    } else {
+                        cvNoMessages.visibility = View.GONE
+                    }
                     chatWithUserItemAdapter.notifyDataSetChanged()
-                    Log.d("GETCHAT", "TAM chatswith ${chatsWith.size}")
                 }
+            }
+            .addOnFailureListener {
+                runOnUiThread() {
+                    chatsWith = emptyList<ChatWithUserItem>() as ArrayList<ChatWithUserItem>
+                    cvNoMessages.visibility = View.VISIBLE
+                }
+
             }
     }
 
@@ -113,6 +129,6 @@ class ChatWithUserItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val root = view.rootView
     fun render(chatWithUserItem: ChatWithUserItem, onChatSelected: (ChatWithUserItem) -> Unit) {
         tvChatWithUser.text = chatWithUserItem.name
-        root.setOnClickListener{ onChatSelected(chatWithUserItem) }
+        root.setOnClickListener { onChatSelected(chatWithUserItem) }
     }
 }
