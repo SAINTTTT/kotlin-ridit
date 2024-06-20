@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ChatActivity">
+    tools:context=".chat.ChatActivity">
 
     <TextView
         android:id="@+id/chatHeader"
@@ -14,13 +14,14 @@
         android:paddingBottom="10dp"
         android:text="Tus mensajes con usuario Z"
         android:textSize="26sp"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/rvChatMessages"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvChatMessages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:id="@+id/rvChatMessages"
         app:layout_constraintBottom_toTopOf="@+id/inputTextContainer"
         app:layout_constraintTop_toBottomOf="@+id/chatHeader" />
 

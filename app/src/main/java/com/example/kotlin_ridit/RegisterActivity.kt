@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.firestore
 
 class RegisterActivity : AppCompatActivity() {
@@ -38,7 +39,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun initUI() {
 
-        tvRegisterGoToLogin.setOnClickListener{finish()}
+        tvRegisterGoToLogin.setOnClickListener { finish() }
 
         btnRegister.setOnClickListener() {
             val username = etRegisterUsername.text.toString()
@@ -50,7 +51,10 @@ class RegisterActivity : AppCompatActivity() {
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
                             // Una vez registrado, hago el insert en la DB
-                            Firebase.firestore.collection("users").document(email).set(hashMapOf("username" to username))
+//                            Firebase.firestore.collection("users").document(email)
+//                                .set(hashMapOf("username" to username))
+                            // guardar en la base para los chats
+                            addUserToChatDatabase(username, email, auth.currentUser?.uid)
                             Log.d("REGISTER", "createUserWithEmail:success")
                             val user = auth.currentUser
                             // redirige al home?
@@ -70,6 +74,14 @@ class RegisterActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+        }
+    }
+
+    private fun addUserToChatDatabase(username: String, email: String, uid: String?) {
+        val db = FirebaseDatabase.getInstance().getReference()
+        if (uid != null) {
+            db.child("user").child(uid)
+                .setValue(hashMapOf("name" to username, "email" to email, "uid" to uid))
         }
     }
 

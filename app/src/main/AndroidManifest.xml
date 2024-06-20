@@ -27,7 +27,7 @@
             android:name=".CreateCommunityActivity"
             android:exported="false" />
         <activity
-            android:name=".ChatActivity"
+            android:name=".chat.ChatActivity"
             android:exported="false" />
         <activity
             android:name=".CommentsHistoryActivity"

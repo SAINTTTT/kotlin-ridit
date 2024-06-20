@@ -1,4 +1,4 @@
-package com.example.kotlin_ridit
+package com.example.kotlin_ridit.chat
 
 class Message {
     var message: String? = null
