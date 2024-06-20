@@ -48,7 +48,7 @@ class MessagesActivity : AppCompatActivity() {
     }
 
     private fun initUI() {
-        chatWithUserItemAdapter = ChatWithUserItemAdapter(this, chatsWith)
+        chatWithUserItemAdapter = ChatWithUserItemAdapter(this, chatsWith, {item -> navigateToChatActivity(item)})
         rvMessages.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rvMessages.adapter = chatWithUserItemAdapter
     }
@@ -79,8 +79,9 @@ class MessagesActivity : AppCompatActivity() {
             }
     }
 
-    private fun navigateToChatActivity() {
+    private fun navigateToChatActivity(chat: ChatWithUserItem) {
         val intent = Intent(this, ChatActivity::class.java)
+        intent.putExtra("uid", chat.uid)
         startActivity(intent)
     }
 }
@@ -89,7 +90,8 @@ data class ChatWithUserItem(val name: String, val uid: String)
 
 class ChatWithUserItemAdapter(
     val context: Context,
-    val chatWithUserList: ArrayList<ChatWithUserItem>
+    val chatWithUserList: ArrayList<ChatWithUserItem>,
+    val onChatSelected: (ChatWithUserItem) -> Unit
 ) : RecyclerView.Adapter<ChatWithUserItemViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatWithUserItemViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_chat, parent, false)
@@ -101,14 +103,16 @@ class ChatWithUserItemAdapter(
     }
 
     override fun onBindViewHolder(holder: ChatWithUserItemViewHolder, position: Int) {
-        holder.render(chatWithUserList[position])
+        holder.render(chatWithUserList[position], onChatSelected)
     }
 
 }
 
 class ChatWithUserItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val tvChatWithUser: TextView = view.findViewById(R.id.tvChatWithUser)
-    fun render(chatWithUserItem: ChatWithUserItem) {
+    val root = view.rootView
+    fun render(chatWithUserItem: ChatWithUserItem, onChatSelected: (ChatWithUserItem) -> Unit) {
         tvChatWithUser.text = chatWithUserItem.name
+        root.setOnClickListener{ onChatSelected(chatWithUserItem) }
     }
 }
