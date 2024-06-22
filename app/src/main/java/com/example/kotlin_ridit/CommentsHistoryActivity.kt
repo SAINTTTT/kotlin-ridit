@@ -19,7 +19,6 @@ class CommentsHistoryActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var commentAdapter: CommentAdapter
     private lateinit var commentList: MutableList<Comment>
-    private lateinit var titlePost : StringBuilder
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +28,6 @@ class CommentsHistoryActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         this.commentList = mutableListOf<Comment>()
-        this.titlePost = StringBuilder("Los String son inmutables")
 
         val db = Firebase.firestore
         db.collection("comments")
@@ -40,12 +38,8 @@ class CommentsHistoryActivity : AppCompatActivity() {
                     val content = document.data["content"] as String
                     val creationDate = document.data["creationDate"] as Timestamp
                     val titleId = document.data["commentsTo"].toString()
-                    //val titleId = document.data["commentsTo"].toString().substring(7)
 
-                    fetchPostTitle(titleId) { title ->
-                        this.titlePost.append(title)
 
-                    }
                     this.commentList.add(Comment(
                         titleId,content,
                         SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(creationDate.toDate())))
@@ -58,17 +52,6 @@ class CommentsHistoryActivity : AppCompatActivity() {
                 }
             }
     }
-
-    private fun fetchPostTitle(titleId: String, callback: (String) -> Unit) {
-        Firebase.firestore.collection("posts").document(titleId).get()
-            .addOnSuccessListener { documentPost ->
-                val dataPosts = documentPost.data
-                val returnTitle = dataPosts?.get("title")?.toString().toString()
-                callback(returnTitle)
-
-            }
-    }
-
 
 }
 

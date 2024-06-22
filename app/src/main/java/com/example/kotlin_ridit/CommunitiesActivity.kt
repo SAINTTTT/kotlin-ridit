@@ -9,9 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -20,6 +23,7 @@ class CommunitiesActivity : AppCompatActivity() {
     private lateinit var communityAdapter: CommunityAdapter
     private lateinit var communityList: MutableList<Community>
     private lateinit var btnCreateCommunity: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_communities)
@@ -51,10 +55,12 @@ class CommunitiesActivity : AppCompatActivity() {
 
     private fun initComponents() {
         btnCreateCommunity = findViewById(R.id.add_button)
+        //btnLeaveCommunity = findViewById(R.id.leave_button)
     }
 
     private fun initUI() {
         btnCreateCommunity.setOnClickListener { navigateToCreateCommunity() }
+        //btnLeaveCommunity.setOnClickListener { navigateToLeaveCommunity() }
     }
 
     private fun navigateToCreateCommunity() {
@@ -73,6 +79,8 @@ class CommunityAdapter(private val communityList: List<Community>) :
     RecyclerView.Adapter<CommunityAdapter.CommunityViewHolder>() {
 
     class CommunityViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        val btnLeaveCommunity: Button = itemView.findViewById(R.id.leave_button)
         val communityName: TextView = itemView.findViewById(R.id.community_name)
         val communityMembers: TextView = itemView.findViewById(R.id.community_members)
     }
@@ -87,6 +95,25 @@ class CommunityAdapter(private val communityList: List<Community>) :
         val community = communityList[position]
         holder.communityName.text = community.name
         holder.communityMembers.text = "${community.members} miembros"
+
+        holder.btnLeaveCommunity.setOnClickListener {
+            val nombreComunidad = communityList[position].name
+
+            val db = Firebase.firestore
+            db.collection("communities").whereEqualTo("name",nombreComunidad).get()
+                .addOnSuccessListener { querySnapshot ->
+                    for (document in querySnapshot.documents){
+                        document.reference.update("members",FieldValue.arrayRemove(FirebaseAuth.getInstance().currentUser?.email.toString()))
+                            .addOnSuccessListener {
+                                println("SALIOOOOOOOOOO")
+                                notifyItemRemoved(position)
+
+                            }
+
+                    }
+                }
+        }
+
     }
 
     override fun getItemCount() = communityList.size
