@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -45,8 +46,8 @@ class PostActivity : AppCompatActivity() {
     private lateinit var commentsAdapter: PostCommentsAdapter
     private lateinit var comments: MutableList<PostComment>
     private lateinit var tvCommunity: TextView
-    private lateinit var tvPostUpvoteArrow: TextView
-    private lateinit var tvPostDownvoteArrow: TextView
+    private lateinit var tvPostUpvoteArrow: ImageView
+    private lateinit var tvPostDownvoteArrow: ImageView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post)
@@ -103,7 +104,7 @@ class PostActivity : AppCompatActivity() {
             intent.getStringExtra(EXTRA_POST_DOWNVOTES_COUNT)
         cv.findViewById<TextView>(R.id.tvPostCommentsCount).text =
             intent.getStringExtra(EXTRA_POST_COMMENTS_COUNT)
-        cv.findViewById<TextView>(R.id.tvPostCommentsIcon)
+        cv.findViewById<ImageView>(R.id.tvPostCommentsIcon)
             .setOnClickListener { navigateToCommentPost() }
     }
 
