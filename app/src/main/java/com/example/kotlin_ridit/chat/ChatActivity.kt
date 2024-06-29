@@ -1,8 +1,8 @@
 package com.example.kotlin_ridit.chat
 
 import android.os.Bundle
-import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,7 +17,7 @@ import com.google.firebase.database.ValueEventListener
 
 class ChatActivity : AppCompatActivity() {
     private lateinit var etChatInputText: EditText
-    private lateinit var btnSendMessage: Button
+    private lateinit var btnSendMessage: ImageButton
     private lateinit var rvChatMessages: RecyclerView
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var messageList: ArrayList<Message>

@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:textColor="#fafafa"
+            android:textColor="@color/black"
             android:textSize="20sp"
             tool:text="mensaje enviado " />
     </RelativeLayout>

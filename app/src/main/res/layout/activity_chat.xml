@@ -14,8 +14,8 @@
         android:paddingBottom="10dp"
         android:text="Tus mensajes con usuario Z"
         android:textSize="26sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/rvChatMessages"/>
+        app:layout_constraintBottom_toTopOf="@+id/rvChatMessages"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvChatMessages"
@@ -29,7 +29,7 @@
         android:id="@+id/inputTextContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#333"
+        android:background="#3B4C4B"
         android:orientation="horizontal"
         android:padding="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -41,15 +41,17 @@
             android:id="@+id/etChatInputText"
             android:layout_width="290dp"
             android:layout_height="60dp"
-            android:background="#E8E8E8" />
+            android:layout_marginTop="6dp"
+            android:background="@drawable/input_text_border" />
 
-        <Button
+        <ImageButton
             android:id="@+id/btnSendMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="Enviar"/>
-
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="13dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/send_message_rounded"
+            android:src="@drawable/send_message_icon" />
 
     </LinearLayout>
 
