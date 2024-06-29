@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:height="60dp"
-            android:background="@null"
+            android:background="@drawable/input_text_border"
             android:hint="@string/create_community_name_hint"
             android:inputType="text"
             android:padding="6sp" />
@@ -47,14 +47,13 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:background="@color/teal_200"
-        android:padding="10dp"
-        app:cardCornerRadius="10dp">
+        android:padding="10dp">
 
         <EditText
             android:id="@+id/etCommunityDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#fafafa"
+            android:background="@drawable/input_text_border"
             android:foregroundTint="#FFFFFF"
             android:gravity="top"
             android:hint="@string/create_community_descritption_hint"
@@ -68,7 +67,7 @@
         android:id="@+id/btnCreateCommunity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#555"
+        android:background="@drawable/action_btn"
         android:text="@string/create_community_btn_text"
         android:textColor="#fafafa"
         android:textSize="20sp" />
